@@ -34,9 +34,10 @@ define Build/Prepare/luci-app-cert
 	gzip -dc $(DL_DIR)/$(PKG_SOURCE) | $(TAR) -C $(PKG_BUILD_DIR)/root/usr/lib/cert/client --strip-components=1 -xf - acme.sh-$(ACMESH_VERSION)/acme.sh acme.sh-$(ACMESH_VERSION)/dnsapi
 	find $(PKG_BUILD_DIR)/root/usr/lib/cert/client/dnsapi -type f ! -name '*.sh' -delete
 	chmod 0755 $(PKG_BUILD_DIR)/root/usr/lib/cert/client/acme.sh
-	for f in etc/init.d/cert etc/uci-defaults/90_luci-app-cert usr/lib/cert/deploy.sh usr/lib/cert/notify.sh usr/lib/cert/runner.sh usr/lib/cert/update-client.sh usr/libexec/cert-dnsinfo.sh usr/libexec/cert-logread.sh usr/libexec/cert-status.sh; do \
+	for f in etc/init.d/cert etc/uci-defaults/90_luci-app-cert usr/lib/cert/deploy.sh usr/lib/cert/notify.sh usr/lib/cert/runner.sh usr/lib/cert/update-client.sh; do \
 		[ -f "$(PKG_BUILD_DIR)/root/$$$$f" ] && chmod 0755 "$(PKG_BUILD_DIR)/root/$$$$f" || true; \
 	done
+	[ -f "$(PKG_BUILD_DIR)/root/usr/share/rpcd/ucode/cert.uc" ] && chmod 0644 "$(PKG_BUILD_DIR)/root/usr/share/rpcd/ucode/cert.uc" || true
 	[ -f "$(PKG_BUILD_DIR)/root/usr/lib/cert/functions.sh" ] && chmod 0644 "$(PKG_BUILD_DIR)/root/usr/lib/cert/functions.sh" || true
 	[ -f "$(PKG_BUILD_DIR)/root/etc/config/cert" ] && chmod 0600 "$(PKG_BUILD_DIR)/root/etc/config/cert" || true
 endef

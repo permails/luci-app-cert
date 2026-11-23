@@ -1,22 +1,34 @@
 'use strict';
 'require form';
-'require fs';
+'require rpc';
 'require uci';
 'require ui';
 'require view';
 
+const callGetStatus = rpc.declare({
+	object: 'luci.cert',
+	method: 'get_status',
+	expect: {}
+});
+
+const callServiceAction = rpc.declare({
+	object: 'luci.cert',
+	method: 'service_action',
+	params: ['action', 'arg1', 'arg2'],
+	expect: { code: 1, stdout: '', stderr: '' }
+});
+
 return view.extend({
 	load() {
 		return Promise.all([
-			L.resolveDefault(fs.exec_direct('/usr/libexec/cert-status.sh'), '{}'),
+			L.resolveDefault(callGetStatus(), {}),
 			L.resolveDefault(uci.load('ddns')),
 			L.resolveDefault(uci.load('cert')),
 		]);
 	},
 
 	render(data) {
-		let status = {};
-		try { status = JSON.parse(data[0] || '{}'); } catch (e) { status = {}; }
+		let status = (data[0] && typeof data[0] === 'object') ? data[0] : {};
 		let ddnsDomains = _collectDdnsDomains();
 		let m, s, o;
 
@@ -145,7 +157,7 @@ return view.extend({
 			let btn = ev.target;
 			btn.disabled = true;
 			btn.textContent = _('Updating...');
-			return fs.exec('/etc/init.d/cert', ['update_client']).then(res => {
+			return callServiceAction('update_client', '', '').then(res => {
 				btn.disabled = false;
 				btn.textContent = _('Update acme.sh & DNS APIs');
 				if (res.code !== 0) {

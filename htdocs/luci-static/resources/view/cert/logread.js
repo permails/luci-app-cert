@@ -1,32 +1,13 @@
 'use strict';
-'require fs';
 'require poll';
 'require rpc';
 'require view';
 
-const callLogRead = rpc.declare({
-	object: 'log',
-	method: 'read',
-	params: ['lines', 'stream', 'oneshot'],
-	expect: { log: [] }
+const callGetLogs = rpc.declare({
+	object: 'luci.cert',
+	method: 'get_logs',
+	expect: { lines: [] }
 });
-
-const SEVERITIES = ['emerg', 'alert', 'crit', 'err', 'warn', 'notice', 'info', 'debug'];
-
-function _isAcmeOrCertLog(msg) {
-	if (!msg || typeof msg !== 'string') return false;
-	return /^(cert(?:-[a-z0-9_]+)?|runner\.sh)(\[\d+\])?:/i.test(msg)
-		|| /^procd:.*(?:\/etc\/rc\.d\/[SK]\d*cert|\/etc\/init\.d\/cert|\bcert::)/i.test(msg)
-		|| /\b(?:acme\.sh|\/usr\/lib\/cert\/|cert-status\.sh|cert-dnsinfo\.sh)\b/i.test(msg);
-}
-
-function _formatLogTime(ts) {
-	let d = new Date(ts);
-	if (isNaN(d.getTime())) return '';
-	let pad = n => String(n).padStart(2, '0');
-	return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate())
-		+ ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
-}
 
 function _extractLogSeverity(line) {
 	if (!line) return '';
@@ -65,32 +46,8 @@ return view.extend({
 	},
 
 	_fetchLogLines() {
-		return L.resolveDefault(fs.exec_direct('/usr/libexec/cert-logread.sh'), '').then(raw => {
-			if (typeof raw === 'string' && raw.trim() !== '') {
-				return raw.trim().split('\n');
-			}
-			return callLogRead(1000, false, true).then(entries => {
-				if (!Array.isArray(entries)) return [];
-				let out = [];
-				for (let e of entries) {
-					let msg = (e && typeof e.msg === 'string') ? e.msg : '';
-					if (!_isAcmeOrCertLog(msg)) continue;
-					let sev = SEVERITIES[(e.priority || 0) % 8] || 'info';
-					let ts = e.time ? _formatLogTime(e.time) : '';
-					out.push((ts ? '[' + ts + '] ' : '') + '[' + sev + '] ' + msg);
-				}
-				return out;
-			}).catch(() => {
-				return L.resolveDefault(fs.stat('/usr/libexec/syslog-wrapper'), null).then(st => {
-					if (!st || !st.path) return [];
-					return L.resolveDefault(fs.exec_direct(st.path), '').then(sysRaw => {
-						if (!sysRaw) return [];
-						return sysRaw.trim().split('\n').filter(line => {
-							return /(?:^|\s)(cert(?:-[a-z0-9_]+)?|runner\.sh)(\[\d+\])?:|\b(?:acme\.sh|\/usr\/lib\/cert\/|\/etc\/init\.d\/cert)\b/i.test(line);
-						});
-					});
-				});
-			});
+		return L.resolveDefault(callGetLogs(), []).then(lines => {
+			return Array.isArray(lines) ? lines : [];
 		});
 	},
 

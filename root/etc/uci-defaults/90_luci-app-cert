@@ -10,6 +10,10 @@ chmod 0700 /etc/cert /etc/cert/acme
 chmod 0755 /etc/ssl/cert
 [ -f /etc/config/cert ] && chmod 0600 /etc/config/cert
 
+if [ -x /etc/init.d/rpcd ]; then
+	/etc/init.d/rpcd restart >/dev/null 2>&1 || true
+fi
+
 if [ -x /etc/init.d/cert ]; then
 	/etc/init.d/cert enable
 	/etc/init.d/cert start

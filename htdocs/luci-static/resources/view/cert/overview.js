@@ -2,10 +2,30 @@
 'require form';
 'require fs';
 'require poll';
+'require rpc';
 'require uci';
 'require ui';
 'require view';
 "require view.cert.dnsapi as dnsapi";
+
+const callGetStatus = rpc.declare({
+	object: 'luci.cert',
+	method: 'get_status',
+	expect: {}
+});
+
+const callGetDnsInfo = rpc.declare({
+	object: 'luci.cert',
+	method: 'get_dnsinfo',
+	expect: { text: '' }
+});
+
+const callServiceAction = rpc.declare({
+	object: 'luci.cert',
+	method: 'service_action',
+	params: ['action', 'arg1', 'arg2'],
+	expect: { code: 1, stdout: '', stderr: '' }
+});
 
 let _statusBox = null;
 let _certsBox = null;
@@ -15,20 +35,19 @@ let _selectedTarget = null;
 return view.extend({
 	load() {
 		return Promise.all([
-			L.resolveDefault(fs.exec_direct('/usr/libexec/cert-status.sh'), '{}'),
-			L.resolveDefault(fs.exec_direct('/usr/libexec/cert-dnsinfo.sh'), ''),
-			L.resolveDefault(fs.list('/usr/lib/cert/client/dnsapi/'), null),
+			L.resolveDefault(callGetStatus(), {}),
+			L.resolveDefault(callGetDnsInfo(), ''),
 			L.resolveDefault(fs.lines('/proc/sys/kernel/hostname'), ''),
 			L.resolveDefault(uci.load('cert')),
 		]);
 	},
 
 	render(data) {
-		_latestStatus = _parseStatusJson(data[0]);
-		let dnsApiInfoText = data[1];
+		_latestStatus = (data[0] && typeof data[0] === 'object') ? data[0] : {};
+		let dnsApiInfoText = data[1] || '';
 		let apiInfos = dnsapi.parseFile(dnsApiInfoText);
-		let hasDnsApi = data[2] != null;
-		let hostname = data[3];
+		let hasDnsApi = Boolean(_latestStatus.acmesh_present || (_latestStatus.dnsapi_count || 0) > 0);
+		let hostname = data[2];
 		let systemDomain = _guessDomain(hostname);
 		let wikiInstructionUrl = 'https://github.com/acmesh-official/acme.sh/wiki/dnsapi';
 		let m, s, o;
@@ -551,8 +570,8 @@ function _parseStatusJson(raw) {
 }
 
 function _refreshStatus(mapObj) {
-	return L.resolveDefault(fs.exec_direct('/usr/libexec/cert-status.sh'), '{}').then(raw => {
-		_latestStatus = _parseStatusJson(raw);
+	return L.resolveDefault(callGetStatus(), {}).then(st => {
+		_latestStatus = (st && typeof st === 'object') ? st : {};
 		let statusInner = document.getElementById('cert_status_inner');
 		if (statusInner) {
 			_renderStatusPanel(statusInner, _latestStatus, mapObj);
@@ -571,9 +590,7 @@ function _runInitAction(action, sectionId, mapObj, saveFirst, btnEl, busyLabel) 
 	}
 	let prep = (saveFirst && mapObj) ? mapObj.save() : Promise.resolve();
 	return prep.then(() => {
-		let args = [action];
-		if (sectionId) args.push(sectionId);
-		return fs.exec('/etc/init.d/cert', args);
+		return callServiceAction(action, sectionId || '', '');
 	}).then(res => {
 		if (btnEl) {
 			btnEl.disabled = false;
@@ -606,10 +623,10 @@ function _setServiceState(enable, btnEl, mapObj) {
 	}
 	let first = enable ? 'enable' : 'stop';
 	let second = enable ? 'start' : 'disable';
-	return fs.exec('/etc/init.d/cert', [first])
+	return callServiceAction(first, '', '')
 		.then(res1 => {
 			if (res1 && res1.code !== 0) return res1;
-			return fs.exec('/etc/init.d/cert', [second]);
+			return callServiceAction(second, '', '');
 		})
 		.then(res => {
 			if (btnEl) {
@@ -695,7 +712,7 @@ function _showDeployModal(domain, mapObj) {
 			btnEl.disabled = true;
 			if (busyText) btnEl.textContent = busyText;
 		}
-		return fs.exec('/etc/init.d/cert', args).then(res => {
+		return callServiceAction(args[0], args[1] || '', args[2] || '').then(res => {
 			if (res.code !== 0) {
 				setBanner(true, res.stderr || res.stdout || _('Command failed (%d)').format(res.code));
 			} else {
