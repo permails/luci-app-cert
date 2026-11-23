@@ -1,0 +1,25 @@
+{
+	"luci-app-cert": {
+		"description": "Grant UCI and runtime access for luci-app-cert",
+		"read": {
+			"cgi-io": [ "exec" ],
+			"file": {
+				"/usr/lib/cert/client/dnsapi": [ "list" ],
+				"/proc/sys/kernel/hostname": [ "read" ],
+				"/etc/ssl/cert": [ "list" ],
+				"/etc/ssl/cert/*": [ "read" ],
+				"/usr/libexec/cert-dnsinfo.sh": [ "exec" ],
+				"/usr/libexec/cert-logread.sh": [ "exec" ],
+				"/usr/libexec/cert-status.sh": [ "exec" ],
+				"/etc/init.d/cert": [ "exec" ]
+			},
+			"uci": [ "cert", "ddns" ],
+			"ubus": {
+				"log": [ "read" ]
+			}
+		},
+		"write": {
+			"uci": [ "cert" ]
+		}
+	}
+}

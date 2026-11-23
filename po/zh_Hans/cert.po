@@ -1,0 +1,943 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: luci-app-cert\n"
+"Last-Translator: permails <logo@permails.com>\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh_Hans\n"
+
+msgid "Certificate Manager"
+msgstr "证书管理"
+
+msgid "Configure"
+msgstr "配置"
+
+msgid "Log View"
+msgstr "日志查看"
+
+msgid "Certificate Log"
+msgstr "证书运行日志"
+
+msgid "Global Settings"
+msgstr "全局配置"
+
+msgid "Account email"
+msgstr "账户邮箱"
+
+msgid "Enable debug logging"
+msgstr "启用调试日志"
+
+msgid "Found DDNS domains"
+msgstr "发现 DDNS 域名"
+
+msgid "Import"
+msgstr "导入"
+
+msgid "Certificate Configurations"
+msgstr "证书配置"
+
+msgid "General Settings"
+msgstr "常规设置"
+
+msgid "Webroot Challenge Validation"
+msgstr "Webroot 验证"
+
+msgid "DNS Challenge Validation"
+msgstr "DNS 验证"
+
+msgid "Advanced Settings"
+msgstr "高级设置"
+
+msgid "Enabled"
+msgstr "启用"
+
+msgid "Validation method"
+msgstr "验证方式"
+
+msgid "Standalone"
+msgstr "独立模式"
+
+msgid "Validation via TLS ALPN"
+msgstr "TLS ALPN 验证"
+
+msgid "Listen port"
+msgstr "监听端口"
+
+msgid "Domain names"
+msgstr "域名列表"
+
+msgid "Webroot directory"
+msgstr "Webroot 目录"
+
+msgid "DNS API"
+msgstr "DNS API 服务商"
+
+msgid "See instructions"
+msgstr "查看说明"
+
+msgid "Alternative DNS API options"
+msgstr "备选 DNS API 选项"
+
+msgid "DNS API credentials"
+msgstr "DNS API 凭据"
+
+msgid "Challenge Alias"
+msgstr "Challenge 别名"
+
+msgid "Domain Alias"
+msgstr "域名别名"
+
+msgid "Wait for DNS update"
+msgstr "等待 DNS 生效（秒）"
+
+msgid "Key type"
+msgstr "密钥类型"
+
+msgid "ACME server URL"
+msgstr "ACME 服务器 URL"
+
+msgid "Use staging server"
+msgstr "使用测试服务器 (Staging)"
+
+msgid "Days until renewal"
+msgstr "续期周期（天）"
+
+msgid "Certificate Profile"
+msgstr "证书配置文件"
+
+msgid "Runtime & Auto-Renewal Status"
+msgstr "运行与自动续期状态"
+
+msgid "Service: Enabled"
+msgstr "服务：已启用"
+
+msgid "Service: Disabled"
+msgstr "服务：未启用"
+
+msgid "Auto-Renew Cron: Active"
+msgstr "自动续期 Cron：已激活"
+
+msgid "Auto-Renew Cron: Missing / Inactive"
+msgstr "自动续期 Cron：缺失/未运行"
+
+msgid "Enable & Start Auto-Renewal"
+msgstr "启用并开启自动续期"
+
+msgid "Save & Issue / Renew All"
+msgstr "保存并立即申请 / 续期全部"
+
+msgid "Force Renew All"
+msgstr "强制续期全部"
+
+msgid "Abort Running"
+msgstr "中止运行"
+
+msgid "Refresh Status"
+msgstr "刷新状态"
+
+msgid "View Log"
+msgstr "查看日志"
+
+msgid "Certificate Tasks"
+msgstr "证书任务状态"
+
+msgid "Config Section"
+msgstr "配置段"
+
+msgid "Domains"
+msgstr "域名"
+
+msgid "Method"
+msgstr "方式"
+
+msgid "Last Run Status"
+msgstr "最近执行状态"
+
+msgid "Actions"
+msgstr "操作"
+
+msgid "Issue / Renew"
+msgstr "申请 / 续期"
+
+msgid "Force"
+msgstr "强制"
+
+msgid "Issued Certificates"
+msgstr "已签发证书"
+
+msgid "Main Domain"
+msgstr "主域名"
+
+msgid "Issuer"
+msgstr "颁发者"
+
+msgid "Expires On"
+msgstr "过期时间"
+
+msgid "Private Key"
+msgstr "私钥路径"
+
+msgid "Public Certificate"
+msgstr "证书路径"
+
+msgid "Nginx Binding"
+msgstr "Nginx 绑定"
+
+msgid "Bind Certificate to luci-nginx"
+msgstr "绑定证书到 luci-nginx"
+
+msgid "Close"
+msgstr "关闭"
+
+msgid "Expired"
+msgstr "已过期"
+
+msgid "%d days left"
+msgstr "剩余 %d 天"
+
+msgid "Filter DNS API"
+msgstr "搜索 DNS API"
+
+msgid "Provider Credentials"
+msgstr "服务商凭据表单"
+
+msgid "Show"
+msgstr "显示"
+
+msgid "Hide"
+msgstr "隐藏"
+
+msgid "DNS APIs: %d"
+msgstr "DNS API：%d 个"
+
+msgid "%d providers available"
+msgstr "共 %d 个可用服务商"
+
+msgid "%d / %d matched"
+msgstr "匹配 %d / %d"
+
+msgid "Web: luci-nginx"
+msgstr "Web：luci-nginx"
+
+msgid "Web: uhttpd / other"
+msgstr "Web：uhttpd / 其他"
+
+msgid "Update acme.sh & DNS APIs"
+msgstr "在线更新 acme.sh 与 DNS API"
+
+msgid "ACME server / CA"
+msgstr "ACME 服务器 / CA"
+
+msgid "EAB Key ID"
+msgstr "EAB 密钥 ID (KID)"
+
+msgid "EAB HMAC Key"
+msgstr "EAB HMAC 密钥"
+
+msgid "Overview"
+msgstr "概览"
+
+msgid "Certificates"
+msgstr "证书配置"
+
+msgid "Runtime Status"
+msgstr "运行状态"
+
+msgid "Auto-Renewal Service"
+msgstr "自动续期服务"
+
+msgid "ACME Core"
+msgstr "ACME 内核"
+
+msgid "Web Server Environment"
+msgstr "Web 服务环境"
+
+msgid "Cron Active"
+msgstr "Cron 已激活"
+
+msgid "Cron Inactive"
+msgstr "Cron 未激活"
+
+msgid "Issue / Renew All"
+msgstr "立即申请 / 续期全部"
+
+msgid "Manage Certificates"
+msgstr "管理证书配置"
+
+msgid "Open Global Settings"
+msgstr "前往全局设置"
+
+msgid "ACME Account"
+msgstr "ACME 账户"
+
+msgid "DDNS Integration"
+msgstr "DDNS 联动导入"
+
+msgid "Import from DDNS"
+msgstr "从 DDNS 导入"
+
+msgid "luci-nginx Integration"
+msgstr "luci-nginx 联动"
+
+msgid "Automatic Reload"
+msgstr "自动热重载"
+
+msgid "Documentation"
+msgstr "说明文档"
+
+msgid "Raw credentials list"
+msgstr "原始凭据列表"
+
+msgid "Auto-Renewal"
+msgstr "自动续期"
+
+msgid "Active"
+msgstr "运行中"
+
+msgid "Manual only"
+msgstr "仅手动"
+
+msgid "Cron not scheduled"
+msgstr "未启用定时任务"
+
+msgid "Every 12h"
+msgstr "每 12 小时"
+
+msgid "Ready"
+msgstr "就绪"
+
+msgid "Missing"
+msgstr "缺失"
+
+msgid "%d DNS providers loaded"
+msgstr "已加载 %d 个 DNS 提供商"
+
+msgid "Web Server"
+msgstr "Web 服务"
+
+msgid "Reload Hooked"
+msgstr "已联动重载"
+
+msgid "Ports 80 / 443 listening"
+msgstr "80 / 443 端口监听中"
+
+msgid "No 80 / 443 conflict"
+msgstr "80 / 443 端口无占用"
+
+msgid "Account & Certs"
+msgstr "账户与证书"
+
+msgid "Setup Needed"
+msgstr "待配置"
+
+msgid "Configured"
+msgstr "已配置"
+
+msgid "Account email unset"
+msgstr "未配置账户邮箱"
+
+msgid "Configure →"
+msgstr "去配置 →"
+
+msgid "Runs at %s"
+msgstr "每天 %s 执行"
+
+msgid "Enable Auto-Renewal"
+msgstr "启用自动续期"
+
+msgid "Force Renew"
+msgstr "强制续期"
+
+msgid "Abort"
+msgstr "中止"
+
+msgid "ACME Client Maintenance"
+msgstr "ACME 客户端维护"
+
+msgid "Installed Version"
+msgstr "当前安装版本"
+
+msgid "Online Client Update"
+msgstr "在线更新客户端"
+
+msgid "Fetch the latest acme.sh and DNS API scripts directly from GitHub (requires internet access)."
+msgstr "直接从 GitHub 拉取最新的 acme.sh 核心及 DNS API 脚本（需要路由器具备互联网连接）。"
+
+msgid "%d lines"
+msgstr "共 %d 行"
+
+msgid "No ACME or certificate logs recorded yet."
+msgstr "暂无 ACME 或证书相关日志。"
+
+msgid "Filter keyword..."
+msgstr "按关键字过滤..."
+
+msgid "Refresh"
+msgstr "刷新"
+
+msgid "Scroll to Bottom"
+msgstr "滚动到底部"
+
+msgid "Scroll to Top"
+msgstr "滚动到顶部"
+
+msgid "Showing all ACME certificate management, issuance, deployment, and update logs (cert)."
+msgstr "仅显示本插件所有模块产生的证书管理、签发、部署与更新日志（cert 标签）。"
+
+msgid "Log Output"
+msgstr "日志输出"
+
+msgid "All enabled (%d)"
+msgstr "全部已启用 (%d)"
+
+msgid "No enabled certificates"
+msgstr "无已启用证书"
+
+msgid "Select target certificate"
+msgstr "选择目标证书"
+
+msgid "Manage automated ACME certificates, monitor renewal health, and bind certificates to luci-nginx."
+msgstr "管理自动化的 ACME 证书签发、监控续期健康状态，并联动绑定证书到 luci-nginx。"
+
+msgid "Port 80 is occupied by %s; Standalone on port 80 will fail."
+msgstr "80 端口当前被 %s 占用；使用 80 端口的 Standalone 模式将会失败。"
+
+msgid "Port 443 is occupied by %s; TLS-ALPN on port 443 will fail."
+msgstr "443 端口当前被 %s 占用；使用 443 端口的 TLS-ALPN 模式将会失败。"
+
+msgid "DNS-01 is recommended when running luci-nginx (no port conflict, supports wildcards)."
+msgstr "运行 luci-nginx 时推荐使用 DNS-01（无端口冲突，且支持泛域名证书）。"
+
+msgid "Port temporarily opened during HTTP-01 / TLS-ALPN-01 validation."
+msgstr "在 HTTP-01 / TLS-ALPN-01 验证期间临时监听的端口。"
+
+msgid "Primary domain first, followed by optional Subject Alternative Names (SANs)."
+msgstr "主域名放在第一行，后续行可添加可选备用域名（SAN）。"
+
+msgid "Invalid domain. Example: example.com or *.example.com"
+msgstr "域名格式无效。示例：example.com 或 *.example.com"
+
+msgid "Wildcard domains (*.example.com) require DNS-01 validation"
+msgstr "泛域名（*.example.com）必须使用 DNS-01 验证方式"
+
+msgid "Search provider (e.g. cloudflare, ali, dnspod, aws)..."
+msgstr "搜索 DNS 服务商（例如 cloudflare、ali、dnspod、aws）..."
+
+msgid "Select the DNS provider plugin matching your domain host."
+msgstr "选择与你域名解析托管商对应的 DNS API 插件。"
+
+msgid "Stored as KEY=\"VAL\" entries (automatically synced with Provider Credentials above)."
+msgstr "以 KEY=\"VAL\" 形式保存（与上方服务商凭据表单自动双向同步）。"
+
+msgid "Seconds to wait after adding TXT record (recommended 30-60s if public DoH propagation checks fail or hang)."
+msgstr "添加 TXT 解析记录后的等待秒数（如公共 DoH 校验超时或失败，建议设为 30-60 秒）。"
+
+msgid "Document root for HTTP-01 webroot validation. Default: /var/run/cert/challenge/"
+msgstr "HTTP-01 Webroot 验证根目录。默认：/var/run/cert/challenge/"
+
+msgid "Algorithm and key length for the generated certificate."
+msgstr "生成证书所使用的签名算法及密钥长度。"
+
+msgid "ECC 256 bits"
+msgstr "ECC 256 位"
+
+msgid "ECC 384 bits"
+msgstr "ECC 384 位"
+
+msgid "RSA 2048 bits"
+msgstr "RSA 2048 位"
+
+msgid "RSA 3072 bits"
+msgstr "RSA 3072 位"
+
+msgid "RSA 4096 bits"
+msgstr "RSA 4096 位"
+
+msgid "Choose a built-in CA or enter a custom ACME directory URL (defaults to Let's Encrypt)."
+msgstr "选择内置 CA 或输入自定义 ACME 目录 URL（默认为 Let's Encrypt）。"
+
+msgid "Let's Encrypt (Default)"
+msgstr "Let's Encrypt（默认）"
+
+msgid "Issue test certificate from Let's Encrypt staging server (untrusted by browsers)."
+msgstr "从 Let's Encrypt 测试环境签发测试证书（不受浏览器信任，用于调试）。"
+
+msgid "External Account Binding KID (required by Google Trust Services, ZeroSSL API EAB, Sectigo, etc.)."
+msgstr "外部账户绑定 KID（Google Trust Services、ZeroSSL API EAB、Sectigo 等 CA 需要）。"
+
+msgid "External Account Binding HMAC key."
+msgstr "外部账户绑定 HMAC 密钥。"
+
+msgid "Optional ACME certificate profile (e.g. classic, tlsserver, shortlived)."
+msgstr "可选 ACME 证书配置文件（例如 classic、tlsserver、shortlived）。"
+
+msgid "Action \"%s\" failed (%d): %s"
+msgstr "执行操作“%s”失败 (%d)：%s"
+
+msgid "Action \"%s\" executed."
+msgstr "操作“%s”已触发执行。"
+
+msgid "Failed to run %s: %s"
+msgstr "运行 %s 失败：%s"
+
+msgid "Failed to start cert service: %s"
+msgstr "启动证书服务失败：%s"
+
+msgid "Automatic renewal service enabled and started."
+msgstr "自动续期服务已启用并启动。"
+
+msgid "1. Bind directly to the LuCI management interface (_lan):"
+msgstr "1. 直接绑定到 LuCI 管理界面（_lan）："
+
+msgid "2. Or reference in custom /etc/nginx/conf.d/*.conf reverse proxies:"
+msgstr "2. 或在自定义 /etc/nginx/conf.d/*.conf 反向代理配置中引用："
+
+msgid "luci-app-cert emits acme.renew on both initial issuance and renewal, so nginx reloads automatically."
+msgstr "luci-app-cert 在首次签发与后续续期时均会触发 acme.renew 事件，nginx 会自动重载配置。"
+
+msgid "Missing /usr/lib/cert/client/acme.sh. Click \"Update acme.sh & DNS APIs\" or reinstall luci-app-cert."
+msgstr "缺少 /usr/lib/cert/client/acme.sh。请在全局设置中点击“在线更新 acme.sh 与 DNS API”或重新安装插件。"
+
+msgid "Automatic renewal cron is inactive. Click \"Enable & Start Auto-Renewal\" above."
+msgstr "自动续期定时任务未激活。请点击上方“启用自动续期”按钮。"
+
+msgid "Global config error: %s"
+msgstr "全局配置错误：%s"
+
+msgid "Detected external/legacy certificates (%s). luci-app-cert stores state in /etc/cert/acme and symlinks in /etc/ssl/cert."
+msgstr "检测到外部或旧版遗留证书（%s）。luci-app-cert 状态保存在 /etc/cert/acme，证书软链位于 /etc/ssl/cert。"
+
+msgid "Disabled"
+msgstr "已禁用"
+
+msgid "%d / %d"
+msgstr "%d / %d"
+
+msgid "Starting..."
+msgstr "启动中..."
+
+msgid "Aborting..."
+msgstr "中止中..."
+
+msgid "Not triggered in this boot"
+msgstr "本次开机尚未触发"
+
+msgid "No certificate tasks yet. Add a configuration above."
+msgstr "暂无证书任务，请在上方添加证书配置。"
+
+msgid "Certificate Files"
+msgstr "证书文件路径"
+
+msgid "Nginx"
+msgstr "Nginx"
+
+msgid "No issued certificates in /etc/ssl/cert yet."
+msgstr "/etc/ssl/cert 目录下暂无已签发证书。"
+
+msgid "Select a DNS API provider above to configure credentials."
+msgstr "请先在上方选择一个 DNS API 服务商，再填写对应凭据。"
+
+msgid "Metadata for \"%s\" not found; add KEY=VAL entries below."
+msgstr "未找到“%s”的元数据定义，请在下方手动添加 KEY=VAL 条目。"
+
+msgid "Site"
+msgstr "官网"
+
+msgid "Docs"
+msgstr "文档"
+
+msgid "No alternative options defined for this provider."
+msgstr "该服务商未定义备选验证参数。"
+
+msgid "No preset options parsed; add KEY=VAL entries below."
+msgstr "未解析到预设参数字段，请在下方手动添加 KEY=VAL 条目。"
+
+msgid "Default"
+msgstr "默认"
+
+msgid "Configure ACME account identity, logging, and optional integrations."
+msgstr "配置 ACME 账户邮箱、调试日志以及与 DDNS / luci-nginx 的联动选项。"
+
+msgid "Email address registered with the ACME CA for renewal and expiry notifications."
+msgstr "向 ACME CA 注册账户时使用的邮箱，用于接收证书续期与过期提醒。"
+
+msgid "Account email is required"
+msgstr "必须填写账户邮箱"
+
+msgid "Please replace email@example.org with your real email address"
+msgstr "请将默认占位邮箱 email@example.org 替换为你自己的真实邮箱"
+
+msgid "Please enter a valid email address"
+msgstr "请输入有效的电子邮箱地址"
+
+msgid "Output verbose acme.sh diagnostics to system log (visible in Log View)."
+msgstr "将 acme.sh 详细调试过程输出到系统日志（可在“日志查看”中查看）。"
+
+msgid "Detected compatible DDNS domain configurations: %s"
+msgstr "检测到可兼容导入的 DDNS 域名配置：%s"
+
+msgid "luci-app-cert automatically emits acme.renew events so nginx reloads after every issuance and renewal."
+msgstr "luci-app-cert 会在每次签发和续期完成后自动触发 acme.renew 事件，促使 nginx 自动重载。"
+
+msgid "HTTP-01 Webroot Rule (if not using DNS-01)"
+msgstr "HTTP-01 Webroot 规则参考（不使用 DNS-01 时）"
+
+msgid "luci-nginx redirects port 80 to 443 by default. If you use Webroot mode instead of DNS-01, add this location block to your HTTP server:"
+msgstr "luci-nginx 默认会将 80 端口重定向到 443。如果你改用 Webroot 模式而非 DNS-01，请将以下 location 规则加入你的 HTTP server 配置中："
+
+msgid "Updating..."
+msgstr "更新中..."
+
+msgid "Update failed: %s"
+msgstr "更新失败：%s"
+
+msgid "Updated acme.sh & DNS APIs."
+msgstr "acme.sh 与 DNS API 更新完成。"
+
+msgid "The domain %s in DDNS %s is already configured in %s."
+msgstr "域名 %s（位于 DDNS %s）已在配置 %s 中存在。"
+
+msgid "Check the configurations of the added domain certificates"
+msgstr "确认即将导入的域名证书配置"
+
+msgid "Cancel"
+msgstr "取消"
+
+msgid "Save"
+msgstr "保存"
+
+msgid "-- Please select DNS provider --"
+msgstr "-- 请选择 DNS 服务商 --"
+
+msgid "Section name (e.g. my_cert)"
+msgstr "配置名称（例如 my_cert）"
+
+msgid "Clear"
+msgstr "清除"
+
+msgid "No matching providers"
+msgstr "未找到匹配的服务商"
+
+msgid "Enter values only (without KEY= prefix or quotes); auto-synced to KEY=\"VAL\" below."
+msgstr "此处仅填写参数值本身，无需输入变量名（KEY=）或引号，系统会自动同步为下方的 KEY=\"VAL\" 格式。"
+
+msgid "Enter value for %s (without KEY= or quotes)"
+msgstr "仅输入 %s 的值（不含变量名和引号）"
+
+msgid "Default: %s"
+msgstr "默认值：%s"
+
+msgid "Auto-fix"
+msgstr "一键清理"
+
+msgid "Do not include \"export\" or KEY= — enter only the raw value."
+msgstr "不要包含 export 或 KEY= 前缀，请只填纯值。"
+
+msgid "Do not include \"%s=\" — enter only the raw value."
+msgstr "不要包含 \"%s=\" 前缀，请只填纯值。"
+
+msgid "Do not wrap the value in quotes — quotes are added automatically below."
+msgstr "不要在值两端加引号，系统同步到下方列表时会自动添加引号。"
+
+msgid "Credential value must be a single line."
+msgstr "凭据值必须为单行，不能包含换行符。"
+
+msgid "Avoid mixing both single and double quotes in the same value."
+msgstr "同一个凭据值中请避免同时混用单引号和双引号。"
+
+msgid "Leading or trailing whitespace detected."
+msgstr "检测到首尾存在多余空格。"
+
+msgid "Please fix the credential format warning in Provider Credentials before saving."
+msgstr "保存前请先修正「服务商凭据表单」中的格式告警。"
+
+msgid "Do not include \"export\"; use KEY=\"VALUE\" format."
+msgstr "不要包含 export，请使用 KEY=\"VALUE\" 格式。"
+
+msgid "Invalid format: must be KEY=\"VALUE\" (missing \"=\")."
+msgstr "格式无效：必须为 KEY=\"VALUE\"（缺少 \"=\"）。"
+
+msgid "Invalid variable name \"%s\": use letters, digits, and \"_\" only."
+msgstr "变量名 \"%s\" 无效：仅支持字母、数字与下划线 \"_\"。"
+
+msgid "Value after \"=\" must not be empty."
+msgstr "\"=\" 后面的值不能为空。"
+
+msgid "Unclosed quote in credential value."
+msgstr "凭据值中存在未闭合的引号。"
+
+msgid "Enter values only (without KEY= prefix or quotes)."
+msgstr "此处仅填写参数值本身，无需输入变量名（KEY=）或引号。"
+
+msgid "Do not wrap the value in quotes — quotes are handled automatically."
+msgstr "不要在值两端加引号，系统保存时会自动处理。"
+
+msgid "▸ Edit raw KEY=VAL list (fallback only)"
+msgstr "▸ 原始 KEY=\"VAL\" 列表（仅字段异常或自定义变量时使用）"
+
+msgid "▾ Hide raw KEY=VAL list"
+msgstr "▾ 收起原始凭据列表"
+
+msgid "Failed to stop cert service: %s"
+msgstr "停止证书服务失败：%s"
+
+msgid "OpenWrt cert service stopped and disabled."
+msgstr "已停止 OpenWrt 证书服务并取消开机自启。"
+
+msgid "OpenWrt cert service enabled and started."
+msgstr "已启用并启动 OpenWrt 证书服务。"
+
+msgid "Stopping..."
+msgstr "正在停止..."
+
+msgid "Enabling..."
+msgstr "正在启用..."
+
+msgid "Enable Service"
+msgstr "启用服务"
+
+msgid "Stop Service"
+msgstr "停止服务"
+
+msgid "Stopped"
+msgstr "已停止"
+
+msgid "Service Stopped"
+msgstr "服务已停止"
+
+msgid "Autostart & cron disabled"
+msgstr "自启与定时续期已关闭"
+
+msgid "OpenWrt cert service is stopped/inactive. Click \"Enable Service\" above to enable autostart and scheduled renewal."
+msgstr "证书服务当前处于停用或未运行状态，点击上方「启用服务」即可开启自启与定时续期。"
+
+msgid "Certificate Management Service"
+msgstr "证书管理服务"
+
+msgid "Running"
+msgstr "运行中"
+
+msgid "Enable the service first to issue or renew certificates"
+msgstr "请先点击「启用服务」开启证书管理服务后再签发或续期"
+
+msgid "%d target(s)"
+msgstr "%d 个安装目标"
+
+msgid "+ Add Target"
+msgstr "+ 添加目标"
+
+msgid "-- Apply Preset (Optional) --"
+msgstr "-- 应用预设模板（可选）--"
+
+msgid "Add Deploy Target"
+msgstr "添加安装目标"
+
+msgid "Bound to this certificate"
+msgstr "已绑定当前证书"
+
+msgid "Bound: %s"
+msgstr "已绑定：%s"
+
+msgid "Cert Path (Leaf only, optional)"
+msgstr "单域名证书路径（可选）"
+
+msgid "Combined PEM"
+msgstr "合并 PEM（证书+私钥）"
+
+msgid "Combined PEM Path (optional)"
+msgstr "合并 PEM 路径（可选）"
+
+msgid "Command failed (%d)"
+msgstr "命令执行失败（退出码 %d）"
+
+msgid "Copied"
+msgstr "已复制"
+
+msgid "Copy"
+msgstr "复制"
+
+msgid "Copy Path"
+msgstr "复制路径"
+
+msgid "Copy file (Recommended)"
+msgstr "复制文件（推荐）"
+
+msgid "Custom"
+msgstr "自定义"
+
+msgid "Default Self-Signed"
+msgstr "默认自签证书"
+
+msgid "Delete"
+msgstr "删除"
+
+msgid "Deploy target deleted."
+msgstr "安装目标已删除。"
+
+msgid "Deploy target saved."
+msgstr "安装目标已保存。"
+
+msgid "Download"
+msgstr "下载"
+
+msgid "Edit"
+msgstr "编辑"
+
+msgid "Edit Deploy Target"
+msgstr "编辑安装目标"
+
+msgid "Enable automatic deployment on certificate issuance and renewal"
+msgstr "证书每次签发或续期成功时自动重新安装并重载"
+
+msgid "Failed to read %s: %s"
+msgstr "读取文件 %s 失败：%s"
+
+msgid "Fullchain Cert"
+msgstr "完整证书链"
+
+msgid "Fullchain Path"
+msgstr "完整证书链路径"
+
+msgid "HAProxy (/etc/haproxy/cert.pem)"
+msgstr "HAProxy（/etc/haproxy/cert.pem）"
+
+msgid "Install & Deploy Certificate"
+msgstr "安装与部署证书"
+
+msgid "Install / Deploy"
+msgstr "安装部署"
+
+msgid "Install All Targets"
+msgstr "全部立即安装"
+
+msgid "Install Certificate"
+msgstr "安装证书"
+
+msgid "Install Method"
+msgstr "安装方式"
+
+msgid "Install Now"
+msgstr "立即安装"
+
+msgid "Install to LuCI Web"
+msgstr "安装到 LuCI Web"
+
+msgid "Installing..."
+msgstr "正在安装..."
+
+msgid "Invalid destination path \"%s\": must be an absolute path outside /etc/ssl/cert/."
+msgstr "目标路径 \"%s\" 无效：必须为 /etc/ssl/cert/ 以外的绝对路径。"
+
+msgid "LuCI Web (_lan)"
+msgstr "LuCI 管理后台（_lan）"
+
+msgid "LuCI Web / Nginx Binding"
+msgstr "LuCI Web / Nginx 绑定"
+
+msgid "No custom install targets configured. Other OpenWrt services can reference /etc/ssl/cert/ paths directly or add extra targets here for automatic copy and reload."
+msgstr "尚未配置额外安装目标。其他 OpenWrt 服务可直接填写上方 /etc/ssl/cert/ 路径，或在此添加多组目标路径以实现自动拷贝与续期重载。"
+
+msgid "OpenWrt Standard Paths (/etc/ssl/cert/)"
+msgstr "OpenWrt 标准路径（/etc/ssl/cert/）"
+
+msgid "Operation completed."
+msgstr "操作完成。"
+
+msgid "Other Service Install Targets"
+msgstr "其他服务多目标安装（跟随续期自动更新）"
+
+msgid "Please enter at least one destination certificate or key path."
+msgstr "请至少填写一个目标证书或私钥路径。"
+
+msgid "Private Key Path"
+msgstr "私钥路径"
+
+msgid "Quick Preset"
+msgstr "快捷预设"
+
+msgid "Reload Command (optional)"
+msgstr "重载命令（可选）"
+
+msgid "Restore Self-Signed"
+msgstr "恢复默认自签"
+
+msgid "Restoring..."
+msgstr "正在恢复..."
+
+msgid "Save & Install Now"
+msgstr "保存并立即安装"
+
+msgid "Symbolic link"
+msgstr "软链接"
+
+msgid "Symlink"
+msgstr "软链接"
+
+msgid "Target Name"
+msgstr "目标名称"
+
+msgid "e.g. uHTTPd / HAProxy / WebDAV"
+msgstr "例如 uHTTPd / HAProxy / WebDAV"
+
+msgid "uHTTPd (/etc/uhttpd.crt + .key)"
+msgstr "uHTTPd（/etc/uhttpd.crt + .key）"
+
+msgid "Bind to %s"
+msgstr "安装到 %s"
+
+msgid "Remove ACME Binding"
+msgstr "取消 ACME 绑定"
+
+msgid "Reload command must be a single line."
+msgstr "重载命令必须为单行，不能包含换行符。"
+
+msgid "Reserved or unsafe environment variable \"%s\" is not allowed."
+msgstr "不允许使用系统保留或不安全的环境变量 \"%s\"。"
+
+msgid "Synced (%d file(s))"
+msgstr "已同步（%d 个文件）"
+
+msgid "Synced"
+msgstr "已同步"
+
+msgid "Reinstall"
+msgstr "重新安装"
+
+msgid "Log level"
+msgstr "日志记录等级"
+
+msgid "Minimum log severity recorded to system log and Certificate Log. Errors are always recorded."
+msgstr "写入系统日志与证书日志页的最低日志等级（错误等级始终记录）。"
+
+msgid "Error only (err)"
+msgstr "仅记录错误 (err)"
+
+msgid "Warning and above (warn)"
+msgstr "警告及以上 (warn)"
+
+msgid "Info and above (info, default)"
+msgstr "常规信息及以上 (info，默认)"
+
+msgid "Debug verbose (debug)"
+msgstr "详细调试日志 (debug)"
+
+msgid "Log level filter"
+msgstr "按日志等级筛选"
+
+msgid "All Levels"
+msgstr "全部等级"
+
+msgid "Errors Only (err)"
+msgstr "仅错误 (err)"
+
+msgid "Warnings & Errors (warn+)"
+msgstr "警告与错误 (warn+)"
+
+msgid "Info (info / notice)"
+msgstr "信息 (info / notice)"
+
+msgid "Debug (debug)"
+msgstr "调试 (debug)"
+
+msgid "No matching logs for the selected level or keyword."
+msgstr "当前筛选等级或关键词下没有匹配的日志。"

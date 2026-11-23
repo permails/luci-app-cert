@@ -1,0 +1,328 @@
+#!/bin/sh /etc/rc.common
+
+START=25
+USE_PROCD=1
+
+RUN_DIR=/var/run/cert
+export CHALLENGE_DIR=$RUN_DIR/challenge
+export CERT_DIR=/etc/ssl/cert
+export STATE_DIR=/etc/cert/acme
+RUNNER=/usr/lib/cert/runner.sh
+LOG_TAG=cert
+
+. "$IPKG_INSTROOT/usr/lib/cert/functions.sh"
+
+extra_command "abort" "Abort running certificate issuances/renewals"
+extra_command "renew" "Run certificate issuances/renewals"
+extra_command "force_renew" "Force immediate certificate issuances/renewals"
+extra_command "deploy" "Deploy issued certificates to configured targets"
+extra_command "nginx_bind" "Bind or restore SSL certificate on luci-nginx server"
+extra_command "update_client" "Update built-in acme.sh and DNS API scripts"
+
+ensure_cron() {
+	grep -q '/etc/init.d/cert' /etc/crontabs/root 2>/dev/null && return 0
+	if ! mkdir -p /etc/crontabs 2>/dev/null; then
+		log err "Failed to create /etc/crontabs directory for scheduled renewal"
+		return 1
+	fi
+	local min hour hour2
+	min=$(hexdump -n 1 -e '/1 "%u"' /dev/urandom 2>/dev/null)
+	hour=$(hexdump -n 1 -e '/1 "%u"' /dev/urandom 2>/dev/null)
+	min=$(( ${min:-17} % 60 ))
+	hour=$(( (${hour:-2} % 5) + 1 ))
+	hour2=$(( hour + 12 ))
+	if ! echo "$min $hour,$hour2 * * * /etc/init.d/cert renew" >>/etc/crontabs/root 2>/dev/null; then
+		log err "Failed to write cert renewal schedule to /etc/crontabs/root"
+		return 1
+	fi
+	[ -x /etc/init.d/cron ] && /etc/init.d/cron reload >/dev/null 2>&1 || true
+}
+
+first_arg() {
+	echo "$1"
+}
+
+load_options() {
+	local section="$1"
+	local staging calias dalias domains main_domain key_type acme_server days cert_profile dns_wait webroot eab_kid eab_hmac_key
+
+	config_get_bool staging "$section" staging 0
+	procd_append_param env staging="$staging"
+
+	config_get calias "$section" calias
+	procd_append_param env calias="$calias"
+
+	config_get dalias "$section" dalias
+	procd_append_param env dalias="$dalias"
+
+	config_get domains "$section" domains
+	procd_append_param env domains="$domains"
+
+	set -f
+	main_domain="$(first_arg $domains)"
+	set +f
+	procd_append_param env main_domain="$main_domain"
+
+	config_get key_type "$section" key_type ec256
+	procd_append_param env key_type="$key_type"
+
+	config_get acme_server "$section" acme_server
+	procd_append_param env acme_server="$acme_server"
+
+	config_get days "$section" days
+	procd_append_param env days="$days"
+
+	config_get cert_profile "$section" cert_profile
+	procd_append_param env cert_profile="$cert_profile"
+
+	config_get dns_wait "$section" dns_wait
+	procd_append_param env dns_wait="$dns_wait"
+
+	config_get eab_kid "$section" eab_kid
+	procd_append_param env eab_kid="$eab_kid"
+
+	config_get eab_hmac_key "$section" eab_hmac_key
+	procd_append_param env eab_hmac_key="$eab_hmac_key"
+
+	config_get webroot "$section" webroot
+	if [ -n "$webroot" ]; then
+		CHALLENGE_DIR="$webroot"
+	fi
+}
+
+get_cert() {
+	local section="$1"
+	local enabled domains validation_method dns listen_port
+
+	[ -n "${TARGET_SECTION:-}" ] && [ "$section" != "$TARGET_SECTION" ] && return 0
+
+	config_get_bool enabled "$section" enabled 1
+	if [ "$enabled" != 1 ]; then
+		write_status "$section" "disabled" "Certificate is disabled"
+		return 0
+	fi
+
+	config_get domains "$section" domains
+	if [ -z "$domains" ]; then
+		log err "No domains configured for section $section"
+		write_status "$section" "failed" "No domains configured"
+		return 0
+	fi
+
+	config_get validation_method "$section" validation_method
+	config_get dns "$section" dns
+	if [ -z "$validation_method" ]; then
+		if [ -n "$dns" ]; then
+			validation_method="dns"
+		else
+			validation_method="webroot"
+		fi
+	fi
+
+	if [ "$validation_method" = "webroot" ]; then
+		if ! mkdir -p "$CHALLENGE_DIR" 2>/dev/null; then
+			log err "Failed to create webroot directory $CHALLENGE_DIR for $section"
+			write_status "$section" "failed" "Failed to create webroot directory"
+			return 1
+		fi
+	fi
+
+	case "$validation_method" in
+	standalone)
+		config_get listen_port "$section" listen_port 80
+		;;
+	alpn)
+		config_get listen_port "$section" listen_port 443
+		;;
+	*)
+		config_get listen_port "$section" listen_port
+		;;
+	esac
+
+	write_status "$section" "running" "Queued for issuance/renewal"
+
+	procd_open_instance "$section"
+	procd_set_param command "$RUNNER" get
+	procd_set_param stdout 1
+	procd_set_param stderr 1
+	procd_set_param env CHALLENGE_DIR="$CHALLENGE_DIR" CERT_DIR="$CERT_DIR"
+	procd_append_param env section="$section" FORCE_RENEW="${FORCE_RENEW:-0}"
+	procd_append_param env account_email="$account_email" state_dir="$STATE_DIR" debug="$debug" log_level="$log_level"
+	procd_append_param env dns="$dns" validation_method="$validation_method" listen_port="$listen_port"
+
+	load_options "$section"
+
+	load_credentials() {
+		local entry="$1"
+		local key val first last
+		case "$entry" in
+			*=*)
+				key=${entry%%=*}
+				val=${entry#*=}
+				case "$key" in
+					""|[0-9]*|*[!A-Za-z0-9_]*)
+						log err "Ignoring invalid credential key in $section"
+						return 0
+						;;
+					PATH|IFS|HOME|SHELL|USER|LOGNAME|ENV|BASH_ENV|CDPATH|TMPDIR|LD_*|CHALLENGE_DIR|CERT_DIR|STATE_DIR|RUNNER|NOTIFY|ACME|LOG_TAG|TARGET_SECTION|FORCE_RENEW|CERT_LOG_LEVEL|log_level|section|validation_method|domains|main_domain|account_email|dns|debug|listen_port)
+						log err "Ignoring reserved credential variable '$key' in $section"
+						return 0
+						;;
+				esac
+				first=${val%"${val#?}"}
+				last=${val#"${val%?}"}
+				if [ "${#val}" -ge 2 ] && { [ "$first$last" = '""' ] || [ "$first$last" = "''" ]; }; then
+					val=${val#?}
+					val=${val%?}
+				fi
+				procd_append_param env "$key=$val"
+				;;
+		esac
+	}
+	config_list_foreach "$section" credentials load_credentials
+
+	procd_close_instance
+}
+
+load_globals() {
+	[ -z "${account_email:-}" ] || return 1
+
+	local section="$1"
+	config_get account_email "$section" account_email
+	if [ -z "$account_email" ] || [ "$account_email" = "email@example.org" ]; then
+		log err "account_email option is required and must not be email@example.org"
+		write_status "_global" "failed" "Valid account_email is required"
+		exit 1
+	fi
+	export account_email
+	write_status "_global" "ok" "Account: $account_email"
+
+	if ! mkdir -p "$STATE_DIR" "$CERT_DIR" 2>/dev/null; then
+		log err "Failed to create $STATE_DIR or $CERT_DIR"
+	fi
+	chmod 0700 /etc/cert "$STATE_DIR" 2>/dev/null || true
+
+	config_get_bool debug "$section" debug 0
+	config_get log_level "$section" log_level ""
+	if [ -z "$log_level" ]; then
+		[ "$debug" = 1 ] && log_level="debug" || log_level="info"
+	fi
+	[ "$log_level" = "debug" ] && debug=1
+	export debug log_level
+}
+
+start_service() {
+	if ! mkdir -p "$STATE_DIR" "$CERT_DIR" 2>/dev/null; then
+		log err "Failed to create $STATE_DIR or $CERT_DIR"
+	fi
+	chmod 0700 /etc/cert "$STATE_DIR" 2>/dev/null || true
+	ensure_cron
+}
+
+service_started() {
+	echo 'Nightly certificate renewal enabled. To renew now, run `service cert renew`.'
+}
+
+stop_service() {
+	if [ -f /etc/crontabs/root ]; then
+		if ! sed -i '\|/etc/init.d/cert|d' /etc/crontabs/root 2>/dev/null; then
+			log err "Failed to remove cert renewal schedule from /etc/crontabs/root"
+		fi
+		[ -x /etc/init.d/cron ] && /etc/init.d/cron reload >/dev/null 2>&1 || true
+	fi
+	running && stop_aborted="Running certificate renewal(s) aborted and a"
+}
+
+service_stopped() {
+	if enabled; then
+		untilboot=' until next boot. To disable permanently, run `service cert disable`'
+	fi
+	echo "${stop_aborted:-A}utomatic nightly renewal disabled${untilboot:-}."
+	echo 'To re-enable nightly renewal, run `service cert start`. To issue/renew now, run `service cert renew`.'
+}
+
+service_triggers() {
+	procd_add_config_trigger config.change cert \
+		/etc/init.d/cert renew
+}
+
+load_and_run() {
+	account_email=""
+	debug=0
+	config_load cert
+	config_foreach load_globals global
+	if [ -z "$account_email" ]; then
+		log err "No valid global configuration section with account_email found"
+		write_status "_global" "failed" "Missing global account_email"
+		return 1
+	fi
+	config_foreach get_cert cert
+}
+
+ensure_service_active() {
+	if ! enabled; then
+		log err "Service is disabled; enable and start the cert service before running issuance/renewal."
+		echo "Service is disabled; run 'service cert enable && service cert start' first." >&2
+		return 1
+	fi
+	if ! grep -q '/etc/init.d/cert' /etc/crontabs/root 2>/dev/null; then
+		log err "Service is stopped; start the cert service before running issuance/renewal."
+		echo "Service is stopped; run 'service cert start' first." >&2
+		return 1
+	fi
+}
+
+renew() {
+	ensure_service_active || return 1
+	TARGET_SECTION="${1:-}"
+	FORCE_RENEW=0
+	export TARGET_SECTION FORCE_RENEW
+	ensure_cron
+	echo "Starting certificate issuance/renewal in the background; see system log for progress."
+	echo 'Issuances/renewals can be aborted with `service cert abort`.'
+	rc_procd load_and_run
+}
+
+force_renew() {
+	ensure_service_active || return 1
+	TARGET_SECTION="${1:-}"
+	FORCE_RENEW=1
+	export TARGET_SECTION FORCE_RENEW
+	ensure_cron
+	echo "Forcing certificate issuance/renewal in the background; see system log for progress."
+	echo 'Issuances/renewals can be aborted with `service cert abort`.'
+	rc_procd load_and_run
+}
+
+abort() {
+	procd_lock
+	if running "$@"; then
+		procd_kill "$(basename "${basescript:-$initscript}")" "$1"
+		echo "Aborting certificate issuance(s)/renewal(s); see system log for confirmation."
+	elif [ -z "${1:-}" ]; then
+		log_err_msg "No certificate issuances/renewals running to abort!"
+		exit 1
+	else
+		log_err_msg "No certificate issuance/renewal \"$1\" running to abort!"
+		exit 1
+	fi
+}
+
+deploy() {
+	/usr/lib/cert/deploy.sh run_domain "${1:-}" "${2:-}"
+}
+
+nginx_bind() {
+	local server="${1:-_lan}"
+	local target="${2:-}"
+	if [ "$target" = "--self-signed" ] || [ "$target" = "unbind" ] || [ -z "$target" ]; then
+		/usr/lib/cert/deploy.sh nginx_unbind "$server"
+	else
+		/usr/lib/cert/deploy.sh nginx_bind "$server" "$target"
+	fi
+}
+
+update_client() {
+	/usr/lib/cert/update-client.sh "${1:-}"
+}
+

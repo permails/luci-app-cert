@@ -1,0 +1,19 @@
+#!/bin/sh
+
+if [ -d /www/ ] && [ ! -L /www/.well-known/acme-challenge ] && [ ! -d /www/.well-known/acme-challenge/ ]; then
+	mkdir -p /www/.well-known/
+	ln -s /var/run/cert/challenge/.well-known/acme-challenge /www/.well-known/acme-challenge
+fi
+
+mkdir -p /etc/cert/acme /etc/ssl/cert
+chmod 0700 /etc/cert /etc/cert/acme
+chmod 0755 /etc/ssl/cert
+[ -f /etc/config/cert ] && chmod 0600 /etc/config/cert
+
+if [ -x /etc/init.d/cert ]; then
+	/etc/init.d/cert enable
+	/etc/init.d/cert start
+fi
+
+exit 0
+

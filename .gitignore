@@ -1,0 +1,14 @@
+*.lmo
+*.pot
+*.ipk
+*.apk
+*.tar.gz
+.DS_Store
+*.swp
+*~
+.idea/
+.vscode/
+po/templates/
+scripts/
+deploy-to-router.sh
+luci-frontend-design-spec.md
