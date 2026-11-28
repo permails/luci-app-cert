@@ -1094,9 +1094,49 @@ function _renderStatusPanel(container, status, mapObj) {
 	let isFullyStopped = !serviceOk && !hasCron && !isAnyRunning;
 	_updateHeaderServiceBadge(status);
 	let cronPretty = _formatCronPretty(status.cron_entry);
-	let portsHint = (status.ports && (status.ports['80'] || status.ports['443']))
-		? _('Ports 80 / 443 listening')
-		: _('No 80 / 443 conflict');
+	let enabledSections = sections.filter(s => s.enabled !== '0');
+	let listeningSet = {};
+	if (status.ports) {
+		if (status.ports['80']) listeningSet[80] = true;
+		if (status.ports['443']) listeningSet[443] = true;
+		if (Array.isArray(status.ports.all)) {
+			for (let p of status.ports.all) listeningSet[p] = true;
+		}
+	}
+
+	let needPorts = [];
+	let conflictPorts = [];
+	let hasWebroot = false;
+	let hasDns = false;
+	for (let sec of enabledSections) {
+		let m = sec.validation_method || (sec.dns ? 'dns' : 'webroot');
+		if (m === 'dns') {
+			hasDns = true;
+		} else if (m === 'webroot') {
+			hasWebroot = true;
+		} else if (m === 'standalone' || m === 'alpn') {
+			let p = parseInt(sec.listen_port || (m === 'alpn' ? '443' : '80'), 10);
+			if (p > 0 && needPorts.indexOf(p) < 0) {
+				needPorts.push(p);
+				if (listeningSet[p]) conflictPorts.push(p);
+			}
+		}
+	}
+
+	let webPorts = Array.isArray(status.web_ports) ? status.web_ports : [];
+	let webListenLine = webPorts.length > 0 ? _('Listening %s').format(webPorts.join(' / ')) : '';
+	let portModeHint = '';
+	if (enabledSections.length === 0) {
+		portModeHint = _('No enabled tasks');
+	} else if (conflictPorts.length > 0) {
+		portModeHint = _('Port %s in use (conflict)').format(conflictPorts.join(' / '));
+	} else if (needPorts.length > 0) {
+		portModeHint = _('Challenge port %s free').format(needPorts.join(' / '));
+	} else if (hasWebroot) {
+		portModeHint = hasDns ? _('DNS-01 + Webroot (HTTP)') : _('Webroot (uses HTTP server)');
+	} else {
+		portModeHint = _('No local port needed (DNS-01)');
+	}
 
 	let notices = [];
 	if (!acmeshOk) {
@@ -1144,15 +1184,17 @@ function _renderStatusPanel(container, status, mapObj) {
 				])
 			])
 		]),
-		E('div', { 'class': 'cert-card cert-card-info' }, [
+		E('div', { 'class': 'cert-card ' + (conflictPorts.length > 0 ? 'cert-card-warn' : 'cert-card-info') }, [
 			E('div', { 'class': 'cert-card-head' }, [
 				E('span', { 'class': 'cert-card-title' }, _('Web Server')),
-				E('span', { 'class': 'cert-dot cert-dot-info' }, status.nginx_running ? _('Reload Hooked') : _('Active'))
+				E('span', { 'class': 'cert-dot ' + (conflictPorts.length > 0 ? 'cert-dot-warn' : 'cert-dot-info') },
+					conflictPorts.length > 0 ? _('Port Conflict') : (status.nginx_running ? _('Reload Hooked') : _('Active')))
 			]),
 			E('div', { 'class': 'cert-card-body' }, [
-				E('div', { 'class': 'cert-card-main' }, status.nginx_running ? 'luci-nginx' : 'uhttpd / other'),
-				E('div', { 'class': 'cert-card-sub' }, [
-					E('span', {}, portsHint)
+				E('div', { 'class': 'cert-card-main' }, status.nginx_running ? 'luci-nginx' : (status.uhttpd_running ? 'uhttpd' : _('Web Server'))),
+				E('div', { 'class': 'cert-card-sub', 'style': 'flex-direction:column;align-items:flex-start;gap:2px;' }, [
+					webListenLine ? E('div', {}, webListenLine) : '',
+					E('div', { 'style': 'font-weight:600;color:' + (conflictPorts.length > 0 ? 'var(--error-color-high)' : 'var(--text-color-high)') + ';' }, portModeHint)
 				])
 			])
 		]),
@@ -1176,7 +1218,6 @@ function _renderStatusPanel(container, status, mapObj) {
 		])
 	]);
 
-	let enabledSections = sections.filter(s => s.enabled !== '0');
 	let validIds = enabledSections.map(s => s['.name']);
 	if (validIds.length === 0) {
 		_selectedTarget = '';
@@ -1285,6 +1326,60 @@ function _formatCronPretty(entry) {
 	return _('Runs at %s').format(hours.join(' & '));
 }
 
+function _localizeTaskState(state) {
+	switch (state) {
+		case 'valid': return _('Valid');
+		case 'success': return _('Success');
+		case 'running': return _('Running');
+		case 'failed': return _('Failed');
+		case 'disabled': return _('Disabled');
+		case 'ok': return _('OK');
+		default: return state || '';
+	}
+}
+
+function _localizeTaskMessage(msg) {
+	if (!msg) return '';
+	switch (msg) {
+		case 'Certificate is valid (renewal not due yet)':
+			return _('Certificate is valid (renewal not due yet)');
+		case 'Queued for issuance/renewal':
+			return _('Queued for issuance/renewal');
+		case 'Certificate is disabled':
+			return _('Certificate is disabled');
+		case 'No domains configured':
+			return _('No domains configured');
+		case 'Invalid primary domain':
+			return _('Invalid primary domain');
+		case 'DNS validation selected without DNS API':
+			return _('DNS validation selected without DNS API');
+		case 'Failed to create webroot directory':
+			return _('Failed to create webroot directory');
+		case 'Failed to create challenge directory':
+			return _('Failed to create challenge directory');
+		case 'Failed to create state directory':
+			return _('Failed to create state directory');
+	}
+	let m;
+	if ((m = /^Processing (.+) \(([^)]+)\)$/.exec(msg)))
+		return _('Processing %s (%s)').format(m[1], m[2]);
+	if ((m = /^Certificate renewed for (.+)$/.exec(msg)))
+		return _('Certificate renewed for %s').format(m[1]);
+	if ((m = /^Certificate issued for (.+)$/.exec(msg)))
+		return _('Certificate issued for %s').format(m[1]);
+	if ((m = /^Renewal failed for (.+) \(exit (\d+)\); check Certificate Log$/.exec(msg)))
+		return _('Renewal failed for %s (exit %d); check Certificate Log').format(m[1], parseInt(m[2], 10));
+	if ((m = /^Issuance failed for (.+) \(exit (\d+)\); check Certificate Log$/.exec(msg)))
+		return _('Issuance failed for %s (exit %d); check Certificate Log').format(m[1], parseInt(m[2], 10));
+	if ((m = /^Renewal aborted for (.+)$/.exec(msg)))
+		return _('Renewal aborted for %s').format(m[1]);
+	if ((m = /^Issuance aborted for (.+)$/.exec(msg)))
+		return _('Issuance aborted for %s').format(m[1]);
+	if ((m = /^Firewall rule setup failed for (.+)$/.exec(msg)))
+		return _('Firewall rule setup failed for %s').format(m[1]);
+	return msg;
+}
+
 function _renderCertsPanel(container, status, mapObj) {
 	let statuses = status.statuses || {};
 	let certs = Array.isArray(status.certs) ? status.certs : [];
@@ -1321,8 +1416,8 @@ function _renderCertsPanel(container, status, mapObj) {
 			else if (st.state === 'running') tagCls = 'cert-tag-info';
 			else if (st.state === 'failed') tagCls = 'cert-tag-err';
 			stNode = E('div', {}, [
-				E('span', { 'class': 'cert-tag ' + tagCls, 'style': 'margin-right:6px;' }, st.state),
-				E('span', {}, st.message || ''),
+				E('span', { 'class': 'cert-tag ' + tagCls, 'style': 'margin-right:6px;' }, _localizeTaskState(st.state)),
+				E('span', {}, _localizeTaskMessage(st.message)),
 				st.time ? E('span', { 'style': 'opacity:0.65;font-size:12px;margin-left:6px;' }, st.time) : ''
 			]);
 		}
@@ -1379,7 +1474,7 @@ function _renderCertsPanel(container, status, mapObj) {
 
 		let issuerNode = cert.is_staging
 			? E('div', { 'class': 'cert-inline-line', 'title': cert.issuer || '' }, [
-				E('span', { 'class': 'cert-tag cert-tag-warn' }, 'STAGING'),
+				E('span', { 'class': 'cert-tag cert-tag-warn' }, _('Staging')),
 				E('span', { 'class': 'cert-issuer-text' }, cert.issuer || '')
 			])
 			: E('span', { 'class': 'cert-issuer-text', 'title': cert.issuer || '' }, cert.issuer || '—');

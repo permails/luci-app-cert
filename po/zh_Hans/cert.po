@@ -941,3 +941,93 @@ msgstr "调试 (debug)"
 
 msgid "No matching logs for the selected level or keyword."
 msgstr "当前筛选等级或关键词下没有匹配的日志。"
+
+msgid "Listening %s"
+msgstr "监听端口 %s"
+
+msgid "Valid"
+msgstr "有效"
+
+msgid "Success"
+msgstr "成功"
+
+msgid "Failed"
+msgstr "失败"
+
+msgid "OK"
+msgstr "正常"
+
+msgid "Certificate is valid (renewal not due yet)"
+msgstr "证书有效（尚未到续期时间）"
+
+msgid "Queued for issuance/renewal"
+msgstr "已加入签发/续期队列"
+
+msgid "Certificate is disabled"
+msgstr "证书任务已禁用"
+
+msgid "No domains configured"
+msgstr "未配置域名"
+
+msgid "Invalid primary domain"
+msgstr "主域名格式无效"
+
+msgid "DNS validation selected without DNS API"
+msgstr "已选择 DNS 验证但未配置 DNS 提供商"
+
+msgid "Failed to create webroot directory"
+msgstr "创建 Webroot 验证目录失败"
+
+msgid "Failed to create challenge directory"
+msgstr "创建验证目录失败"
+
+msgid "Failed to create state directory"
+msgstr "创建状态目录失败"
+
+msgid "Processing %s (%s)"
+msgstr "正在处理 %s（%s）"
+
+msgid "Certificate renewed for %s"
+msgstr "已续期证书：%s"
+
+msgid "Certificate issued for %s"
+msgstr "已签发证书：%s"
+
+msgid "Renewal failed for %s (exit %d); check Certificate Log"
+msgstr "%s 续期失败（退出码 %d），请查看日志"
+
+msgid "Issuance failed for %s (exit %d); check Certificate Log"
+msgstr "%s 签发失败（退出码 %d），请查看日志"
+
+msgid "Renewal aborted for %s"
+msgstr "已中止 %s 续期"
+
+msgid "Issuance aborted for %s"
+msgstr "已中止 %s 签发"
+
+msgid "Firewall rule setup failed for %s"
+msgstr "%s 防火墙放行规则配置失败"
+
+msgid "Staging"
+msgstr "测试环境"
+
+msgid "No enabled tasks"
+msgstr "暂无启用任务"
+
+msgid "Port %s in use (conflict)"
+msgstr "%s 端口被占用（冲突）"
+
+msgid "Challenge port %s free"
+msgstr "验证端口 %s 空闲"
+
+msgid "DNS-01 + Webroot (HTTP)"
+msgstr "DNS-01 + Webroot（复用 HTTP）"
+
+msgid "Webroot (uses HTTP server)"
+msgstr "Webroot（复用 HTTP 服务）"
+
+msgid "No local port needed (DNS-01)"
+msgstr "DNS验证"
+
+msgid "Port Conflict"
+msgstr "端口冲突"

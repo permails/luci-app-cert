@@ -46,19 +46,26 @@ function hasProcComm(targetName) {
 function checkListeningPorts() {
 	let p80 = false;
 	let p443 = false;
+	let seen = {};
+	let allPorts = [];
 	for (let path in ['/proc/net/tcp', '/proc/net/tcp6']) {
 		let raw = readfile(path);
 		if (!raw) continue;
 		for (let line in split(raw, '\n')) {
 			let cols = split(trim(line), /[ \t]+/);
 			if (length(cols) < 4 || cols[3] != '0A') continue;
-			let local = uc(cols[1]);
-			let suffix = substr(local, -5);
-			if (suffix == ':0050') p80 = true;
-			else if (suffix == ':01BB') p443 = true;
+			let colon = rindex(cols[1], ':');
+			if (colon < 0) continue;
+			let port = hex(substr(cols[1], colon + 1));
+			if (port == 80) p80 = true;
+			else if (port == 443) p443 = true;
+			if (port > 0 && port <= 65535 && !seen[port]) {
+				seen[port] = true;
+				push(allPorts, port);
+			}
 		}
 	}
-	return { '80': p80, '443': p443 };
+	return { '80': p80, '443': p443, all: allPorts };
 }
 
 function readKeyValStatuses(pattern, prefix) {
@@ -228,6 +235,50 @@ function extractDnsInfo(src, id) {
 	return null;
 }
 
+function getWebPorts() {
+	let seen = {};
+	let ports = [];
+	let ctx = null;
+
+	let addListen = (val) => {
+		let items = type(val) == 'array' ? val : (val ? [val] : []);
+		for (let item in items) {
+			let s = trim('' + item);
+			let m = match(s, /:([0-9]+)\b/) || match(s, /^([0-9]+)\b/);
+			if (!m) continue;
+			let p = +m[1];
+			if (p > 0 && p <= 65535 && !seen[p]) {
+				seen[p] = true;
+				push(ports, p);
+			}
+		}
+	};
+
+	try {
+		ctx = cursor();
+		if (ctx) {
+			if (stat('/etc/config/nginx')?.type == 'file' && ctx.load('nginx')) {
+				ctx.foreach('nginx', 'server', (s) => {
+					addListen(s.listen);
+				});
+				ctx.unload();
+			}
+			if (stat('/etc/config/uhttpd')?.type == 'file' && ctx.load('uhttpd')) {
+				ctx.foreach('uhttpd', 'uhttpd', (s) => {
+					addListen(s.listen_http);
+					addListen(s.listen_https);
+				});
+				ctx.unload();
+			}
+		}
+	} catch (e) {}
+	if (ctx) {
+		try { ctx.unload(); } catch (e2) {}
+	}
+	sort(ports, (a, b) => a - b);
+	return ports;
+}
+
 const methods = {
 	get_status: {
 		call: function(request) {
@@ -256,6 +307,8 @@ const methods = {
 				service_enabled,
 				cron_running: hasProcComm('crond'),
 				nginx_running: hasProcComm('nginx'),
+				uhttpd_running: hasProcComm('uhttpd'),
+				web_ports: getWebPorts(),
 				acmesh_present: acmesh.present,
 				acmesh_version: acmesh.version,
 				dnsapi_count,
